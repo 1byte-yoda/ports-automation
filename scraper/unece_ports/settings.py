@@ -1,7 +1,12 @@
+# scraper/unece_ports/settings.py
+
+
 import os
 from datetime import datetime
+from dotenv import load_dotenv
 
 
+load_dotenv()
 base_dir = os.path.abspath(
     os.path.dirname(os.path.dirname(__file__))
 )
@@ -32,8 +37,8 @@ ITEM_PIPELINES = {
 
 
 # Logging
-# LOG_STDOUT = True
-# LOG_FILE = logs_file_dir
+LOG_STDOUT = True
+LOG_FILE = logs_file_dir
 LOG_LEVEL = 'DEBUG'
 
 
@@ -52,4 +57,7 @@ DOWNLOAD_DELAY = 0.25
 
 
 # PostgreSQL
-POSTGRESQL_PIPELINE_URL = 'postgresql://postgres:password@localhost/unece_dev'
+POSTGRESQL_PIPELINE_URL = (
+    os.environ.get('POSTGRESQL_URL') or
+    'postgresql://postgres:password@localhost/unece_dev'
+)

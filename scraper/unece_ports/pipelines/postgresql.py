@@ -1,3 +1,6 @@
+# scraper/unece_ports/pipelines/postgresql.py
+
+
 import traceback
 import dj_database_url
 import psycopg2
@@ -35,7 +38,6 @@ class PostgresqlWriter(object):
 
         # Parse PostgreSQL URL and try to initialize a connection
         conn_kwargs = PostgresqlWriter.parse_postgresql_url(postgresql_url)
-        print(conn_kwargs)
         self.dbpool = adbapi.ConnectionPool('psycopg2',
                                             connect_timeout=5,
                                             **conn_kwargs)

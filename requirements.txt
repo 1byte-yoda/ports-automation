@@ -4,3 +4,5 @@ autopep8==1.5.4
 psycopg2==2.8.6
 dj-database-url==0.5.0
 jsonstreams==0.5.0
+pandas==1.2.0
+python-dotenv==0.15.0

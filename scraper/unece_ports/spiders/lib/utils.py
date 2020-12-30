@@ -1,3 +1,6 @@
+# scraper/unece_ports/spiders/lib/utils.py
+
+
 from collections import namedtuple
 import pandas as pd
 from unece_ports.item_loaders.processors import _DEFAULT_VALUE
@@ -8,9 +11,11 @@ SEARCH_COLUMN = 'Function'
 
 
 def get_data(response_body: bytes) -> namedtuple:
-    _, country, df = pd.read_html(response_body)
-    if len(df) and len(country):
-        country_name = country[0].values.tolist()[0]
+    """Parse table element from response body and store into a DataFrame.
+    Filtering expected columns and expected search values.
+    """
+    _, _, df = pd.read_html(response_body)
+    if len(df):
         df.columns = df.loc[0].values
         df = df.drop(0, axis=0)
         valid_columns = (
@@ -23,10 +28,9 @@ def get_data(response_body: bytes) -> namedtuple:
             df = df[EXPECTED_COLUMNS]
             Ports = namedtuple(
                 typename='Ports',
-                field_names=['country', 'iter']
+                field_names=['iter']
             )
             return Ports(
-                country=country_name,
                 iter=df.iterrows()
             )
     return 0

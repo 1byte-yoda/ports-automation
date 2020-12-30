@@ -3,3 +3,4 @@ venv
 __pycache__
 logs_*.txt
 *.json
+.env.dev
