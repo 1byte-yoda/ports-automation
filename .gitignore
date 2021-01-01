@@ -1,6 +1,7 @@
 .vscode
 venv
 __pycache__
+data
 logs_*.txt
 *.json
-.env.dev
+.env
