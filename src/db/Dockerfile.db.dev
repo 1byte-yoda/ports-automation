@@ -1,0 +1,8 @@
+# base image
+FROM postgres:12-alpine
+
+# run create.sql on init
+ADD ./scripts/1_init_db.sql /docker-entrypoint-initdb.d
+ADD ./scripts/2_create_tables.sql /docker-entrypoint-initdb.d
+RUN chmod a+r /docker-entrypoint-initdb.d/*
+EXPOSE 5432
