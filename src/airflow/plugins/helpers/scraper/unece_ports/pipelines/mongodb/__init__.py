@@ -35,7 +35,8 @@ class MongodbPipeline(object):
         self.report_connection_error = True
 
         mongo_url, mongo_db, mongo_collection = config
-
+        if 'mongo:' in mongo_url:
+            mongo_url = mongo_url.replace('mongo:', 'mongodb:')
         # Setup MongoDB Connection
         self.mongo_url = mongo_url
         self.connection = ConnectionPool(mongo_url, connect_timeout=5)

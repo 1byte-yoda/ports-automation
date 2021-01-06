@@ -42,12 +42,15 @@ def process_port_name(port_name: str) -> str:
         return _DEFAULT_VALUE
     port_name = normalize('NFKD', port_name)
     port_name = port_name.strip()
+    port_name = port_name.title()
     return port_name if port_name else _DEFAULT_VALUE
 
 
-def process_unlocodo(unlocodo: str) -> str:
-    if not unlocodo:
+def process_unlocode(unlocode: str) -> str:
+    if not unlocode:
         return _DEFAULT_VALUE
-    unlocodo = normalize('NFKD', unlocodo)
-    unlocodo = unlocodo.strip()
-    return unlocodo if unlocodo else _DEFAULT_VALUE
+    unlocode = normalize('NFKD', unlocode)
+    unlocode = unlocode.strip()
+    unlocode = " ".join(unlocode.split())
+    unlocode = unlocode.upper()
+    return unlocode if unlocode else _DEFAULT_VALUE

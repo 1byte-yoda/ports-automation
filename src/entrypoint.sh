@@ -4,8 +4,6 @@ TRY_LOOP="20"
 
 : "${POSTGRES_HOST:="postgresqldb"}"
 : "${POSTGRES_PORT:="5432"}"
-: "${POSTGRES_USER:="postgres"}"
-: "${POSTGRES_PASSWORD:="password"}"
 : "${POSTGRES_DB:="airflow"}"
 
 # Defaults and back-compat
@@ -14,6 +12,20 @@ TRY_LOOP="20"
 : "${AIRFLOW__CORE__EXECUTOR:=${EXECUTOR:-Sequential}Executor}"
 : "${AIRFLOW__CORE__SMTP_PASSWORD:=${SMTP_PASSWORD}}"
 : "${AIRFLOW__CORE__SMTP_USER:=${SMTP_USER}}"
+: "${AIRFLOW_CONN_MONGO_STAGING:=${MONGO_DB_URI}}"
+: "${AIRFLOW_CONN_POSTGRES_MASTER:=${POSTGRESQL_URI}}"
+: "${AIRFLOW_VAR_SLACK_API_KEY:=${SLACK_API_KEY}}"
+
+echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" >> ~/.bashrc
+echo "export AIRFLOW__CELERY__BROKER_URL=${AIRFLOW__CELERY__BROKER_URL}" >> ~/.bashrc
+echo "export AIRFLOW__CELERY__RESULT_BACKEND=${AIRFLOW__CELERY__RESULT_BACKEND}" >> ~/.bashrc
+echo "export AIRFLOW__CORE__EXECUTOR=${AIRFLOW__CORE__EXECUTOR}" >> ~/.bashrc
+echo "export AIRFLOW__CORE__FERNET_KEY=${AIRFLOW__CORE__FERNET_KEY}" >> ~/.bashrc
+echo "export AIRFLOW__CORE__SMTP_PASSWORD=${AIRFLOW__CORE__SMTP_PASSWORD}" >> ~/.bashrc
+echo "export AIRFLOW__CORE__SMTP_USER=${AIRFLOW__CORE__SMTP_USER}" >> ~/.bashrc
+echo "export AIRFLOW_CONN_MONGO_STAGING=${AIRFLOW_CONN_MONGO_STAGING}" >> ~/.bashrc
+echo "export AIRFLOW_CONN_POSTGRES_MASTER=${AIRFLOW_CONN_POSTGRES_MASTER}" >> ~/.bashrc
+echo "export AIRFLOW_VAR_SLACK_API_KEY=${SLACK_API_KEY}" >> ~/.bashrc
 
 export \
   AIRFLOW_HOME \
@@ -23,15 +35,17 @@ export \
   AIRFLOW__CORE__FERNET_KEY \
   AIRFLOW__CORE__LOAD_EXAMPLES \
   AIRFLOW__CORE__SQL_ALCHEMY_CONN \
-  AIRFLOW__CORE__SMTP_PASSWORD \
-  AIRFLOW__CORE__SMTP_USER
-
-
+  AIRFLOW__SMTP__SMTP_PASSWORD \
+  AIRFLOW__SMTP__SMTP_USER \
+  AIRFLOW_CONN_MONGO_STAGING \
+  AIRFLOW_CONN_POSTGRES_MASTER \
+  AIRFLOW_VAR_SLACK_API_KEY
 
 # Load DAGs examples (default: Yes)
 if [[ -z "$AIRFLOW__CORE__LOAD_EXAMPLES" && "${LOAD_EX:=n}" == n ]]
 then
   AIRFLOW__CORE__LOAD_EXAMPLES=False
+  echo "export AIRFLOW__CORE__LOAD_EXAMPLES=${AIRFLOW__CORE__LOAD_EXAMPLES}" >> ~/.bashrc
 fi
 
 # Install custom python package if requirements.txt is present
@@ -56,7 +70,8 @@ wait_for_port() {
 AIRFLOW__CORE__SQL_ALCHEMY_CONN="postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
 AIRFLOW__CELERY__RESULT_BACKEND="db+postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
 wait_for_port "Postgres" "$POSTGRES_HOST" "$POSTGRES_PORT"
-
+echo "export AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__CORE__SQL_ALCHEMY_CONN}" >> ~/.bashrc
+echo "export AIRFLOW__CELERY__RESULT_BACKEND=${AIRFLOW__CELERY__RESULT_BACKEND}" >> ~/.bashrc
 
 case "$1" in
   webserver)
@@ -66,6 +81,9 @@ case "$1" in
       airflow scheduler &
     fi
     exec airflow webserver
+    exec airflow variables -s slack_api_key "$AIRFLOW_VAR_SLACK_API_KEY"
+    exec airflow connections add 'mongo_staging' "$AIRFLOW_CONN_MONGO_STAGING"
+    exec airflow connections add 'postgres_master' "$AIRFLOW_CONN_POSTGRES_MASTER"
     ;;
   worker|scheduler)
     # Give the webserver time to run initdb.
