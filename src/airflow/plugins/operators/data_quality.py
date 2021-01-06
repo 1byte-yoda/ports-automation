@@ -1,8 +1,8 @@
-from typing import Callable
-import psycopg2
+import traceback
 from psycopg2.errors import OperationalError
-from airflow.models import BaseOperator, Variable
+from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from airflow.hooks.postgres_hook import PostgresHook
 from helpers.lib.sql_queries import SqlQueries
 
 
@@ -11,17 +11,32 @@ class DataQualityCheckOperator(BaseOperator):
     Airflow operator that runs SQL queries to check the quality
     of downstream data.
     """
-    ui_color = '#89DA59'
+    ui_color = '#28df99'
 
     @apply_defaults
-    def __init__(self, tables, postgres_conn_uri_key, *args, **kwargs):
+    def __init__(self, tables, postgres_config, *args, **kwargs):
+        """
+        Airflow operator that runs SQL queries to check the quality
+        of downstream data.
+
+        :param list tables:
+            list of tables that will be checked against a SQL query.
+        :param PostgresConfig postgres_config:
+            instance of PostgresConfig class that provides connection
+            parameters for Postgres connection.
+        """
         super().__init__(**kwargs)
         self._tables = tables
-        self._postgres_conn_uri = Variable.get(postgres_conn_uri_key)
+        self._postgres_conn_id = postgres_config.conn_id
 
     def execute(self, context):
+        """Does data quality checks for each table in table list.
+        Assert a list of tables against a business defined SQL metrics.
+        """
         self.log.info('DataQualityCheckOperator Starting...')
-        psql_conn = self.connect_to_master_db()
+        self.log.info("Initializing Postgres Master DB Connection...")
+        psql_hook = PostgresHook(postgres_conn_id=self._postgres_conn_id)
+        psql_conn = psql_hook.get_conn()
         psql_cursor = psql_conn.cursor()
         try:
             for table in self._tables:
@@ -30,8 +45,9 @@ class DataQualityCheckOperator(BaseOperator):
                     table=table
                 )
                 psql_cursor.execute(ports_table_data_count)
-                row_count = psql_cursor.fetchone()[0]
-                if row_count < 1:
+                result = psql_cursor.fetchone()
+                row_count = result.get('count')
+                if not row_count:
                     error = (
                         "Data quality check failed. "
                         f"{table} returned no results."
@@ -45,19 +61,10 @@ class DataQualityCheckOperator(BaseOperator):
         except OperationalError:
             self.log.error("DataQualityCheckOperator failed.")
             raise Exception("DataQualityCheckOperator failed.")
+        except Exception:
+            self.log.error(traceback.format_exc())
+            raise Exception("DataQualityCheckOperator failed.")
+        finally:
+            self.log.info('Closing database connections...')
+            psql_conn.close()
         self.log.info('DataQualityCheckOperator Success!')
-
-    def connect_to_master_db(self) -> Callable:
-        """Connects to Postgresql database."""
-        self.log.info("Initializing PostgreSQL DB Connection...")
-        try:
-            _psql_conn = psycopg2.connect(self._postgres_conn_uri)
-        except OperationalError:
-            self.log.error(
-                f"Can't connect to PostgreSQL: {self._postgres_conn_uri}"
-            )
-            raise ValueError(
-                "DataQualityCheckOperator failed. "
-                "Cannot connect to PostgresSQL."
-            )
-        return _psql_conn

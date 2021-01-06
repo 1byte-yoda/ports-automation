@@ -2,7 +2,8 @@
 
 
 class SqlQueries:
-    ports_table_insert = """INSERT INTO ports(
+    ports_table_insert = """
+    INSERT INTO ports(
         countryName, portName, unlocode, coordinates, staging_id
     )
     VALUES (
@@ -23,4 +24,13 @@ class SqlQueries:
             '{updated_at}'
         );
     """
+
     table_row_count = "SELECT COUNT(*) FROM {table}"
+
+    select_all_query_to_json = """
+    SELECT id,
+        countryname AS "countryName",
+        portname AS "portName",
+        coordinates, unlocode
+    FROM {table};
+    """

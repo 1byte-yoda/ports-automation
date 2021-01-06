@@ -63,7 +63,7 @@ RUN set -ex \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
-    && pip install apache-airflow[mongo,postgres,ssh,docker,kubernetes,slack]==${AIRFLOW_VERSION} --constraint /airflow-constraints.txt \
+    && pip install apache-airflow[mongo,postgres,ssh,slack,docker,kubernetes,slack]==${AIRFLOW_VERSION} --constraint /airflow-constraints.txt \
     && pip install -r requirements.txt \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     && apt-get purge --auto-remove -yqq $buildDeps \
@@ -78,7 +78,7 @@ RUN set -ex \
         /usr/share/doc-base
 
 COPY ./entrypoint.sh /entrypoint.sh
-COPY ./airflow/config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
+COPY ./airflow/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
 

@@ -40,11 +40,16 @@ def get_data(response_body: bytes) -> namedtuple:
     return 0
 
 
-def filter_dataframe(_df: pd.DataFrame, _filter: str = ''):
+def filter_dataframe(_df: pd.DataFrame, _filter: str = '') -> pd.DataFrame:
     """Filter null values from a DataFrame, with an optional filter.
     Filtering expected columns and expected search values.
-    @param _df: DataFrame to be filtered.
-    @param _filter: str used to filter SEARCH_COLUMN constant
+
+    :param DataFrame _df:
+        DataFrame to be filtered.
+    :param str _filter:
+        str used to filter SEARCH_COLUMN constant
+    :return DataFrame _df:
+        filtered DataFrame
     """
     _df = _df.fillna(_DEFAULT_VALUE)
     _df = _df[_df[SEARCH_COLUMN].str.contains(_filter)]

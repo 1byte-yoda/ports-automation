@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   airflow:
-    build: 
+    build:
       context: ./src
       dockerfile: Dockerfile.airflow.dev
     image: puckel/docker-airflow:latest
@@ -10,15 +10,16 @@ services:
     container_name: airflow
     env_file: ./src/.env
     volumes:
-      - ./src:/usr/local/src
       - ./src/airflow/dags:/usr/local/airflow/dags
       - ./src/airflow/plugins:/usr/local/airflow/plugins
+      - ./src/airflow/output:/usr/local/airflow/output
+      - ./src/airflow/airflow.cfg:/usr/local/airflow/airflow.cfg
     ports:
       - 8080:8080
-    depends_on: 
+    depends_on:
       - postgresqldb
     healthcheck:
-      test: [ "CMD", "nc", "-z", "airflow", "8080" ]
+      test: ["CMD", "nc", "-z", "airflow", "8080"]
       timeout: 30s
       interval: 30s
       retries: 10

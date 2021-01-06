@@ -5,3 +5,4 @@ logs_*.txt
 *.json
 Dockerfile*
 .git
+logs

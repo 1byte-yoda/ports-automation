@@ -12,6 +12,8 @@ TRY_LOOP="20"
 : "${AIRFLOW_HOME:="/usr/local/airflow"}"
 : "${AIRFLOW__CORE__FERNET_KEY:=${FERNET_KEY:=$(python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)")}}"
 : "${AIRFLOW__CORE__EXECUTOR:=${EXECUTOR:-Sequential}Executor}"
+: "${AIRFLOW__CORE__SMTP_PASSWORD:=${SMTP_PASSWORD}}"
+: "${AIRFLOW__CORE__SMTP_USER:=${SMTP_USER}}"
 
 export \
   AIRFLOW_HOME \
@@ -21,6 +23,8 @@ export \
   AIRFLOW__CORE__FERNET_KEY \
   AIRFLOW__CORE__LOAD_EXAMPLES \
   AIRFLOW__CORE__SQL_ALCHEMY_CONN \
+  AIRFLOW__CORE__SMTP_PASSWORD \
+  AIRFLOW__CORE__SMTP_USER
 
 
 

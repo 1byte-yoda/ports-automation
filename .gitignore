@@ -4,6 +4,7 @@ __pycache__
 data
 logs_*.txt
 *.json
-.env
 *.swp
 logs
+*.html
+*.cfg

@@ -5,13 +5,16 @@ import os
 from scrapy.http import HtmlResponse, Request
 
 
-def fake_response_from_file(file_name, url=None):
+def fake_response_from_file(file_name, url=None) -> HtmlResponse:
     """
     Create a Scrapy fake HTTP response from a HTML file
-    @param file_name: The relative filename from the responses directory,
-                      but absolute paths are also accepted.
-    @param url: The URL of the response.
-    returns: A scrapy HTTP response which can be used for unittesting.
+    :param str file_name:
+        The relative filename from the responses directory,
+        but absolute paths are also accepted.
+    :param str url:
+        The URL of the response.
+    :returns:
+        A scrapy HTTP response which can be used for unittesting.
     """
     if not url:
         url = 'https://service.unece.org/trade/locode/gt.htm'
