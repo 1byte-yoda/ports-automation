@@ -16,9 +16,9 @@ class PortsSpiderItemLoaderProcessorTest(BaseTest):
         self.assertEqual(coordinates1, '1418N 09155W')
         self.assertEqual(coordinates2, '1550N 08845W')
 
-    def test_item_loader_processor_process_coordinates(self):
+    def test_item_loader_processor_process_coordinates_missing_values(self):
         """
-        Test if process_coordinates returns the expected coordinates format.
+        Test if process_coordinates handles coordinates values correctly.
         """
         missing_value1 = self.process_coordinates('\xa0\xa0\t')
         missing_value2 = self.process_coordinates(None)
