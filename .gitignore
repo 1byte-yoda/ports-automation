@@ -9,6 +9,7 @@ __pycache__
 
 # environment mappings
 .env
+.env.db
 
 # expected output
 *.json
