@@ -12,23 +12,26 @@ EXPECTED_COLUMNS = ['NameWoDiacritics', 'LOCODE', 'Coordinates']
 SEARCH_COLUMN = 'Function'
 
 
-def get_data(response_body: bytes) -> namedtuple:
+def get_data(response_body) -> namedtuple:
     """
-    Parse table element from response body and store into a DataFrame.
+    Parse table elements from response body and store into DataFrames.
+
+    :param bytes response_body:
+        HTML response body that will be searched for table elements.
+    :return namedtuple Ports:
+        namedtuple instance that contains an iterable and string attribute
     """
     _, df_country, df = pd.read_html(response_body)
     if len(df) and len(df_country):
-        country_name = df_country.iloc[0].values[0]
-        df.columns = df.loc[0].values
-        df = df.drop(0, axis=0)
+        country_name = df_country.iloc[0][0]
+        df.columns = df.iloc[0]
+        df = df.drop(df.index[0])
         valid_columns = (
             column in list(df.columns)
             for column in EXPECTED_COLUMNS + [SEARCH_COLUMN]
         )
         if all(valid_columns):
-            df = df.fillna(_DEFAULT_VALUE)
-            df = df[df[SEARCH_COLUMN].str.contains('1')]
-            df = df[EXPECTED_COLUMNS]
+            df = filter_dataframe(df, "1")
             Ports = namedtuple(
                 typename='Ports',
                 field_names=['iter', 'countryName']
@@ -40,7 +43,7 @@ def get_data(response_body: bytes) -> namedtuple:
     return 0
 
 
-def filter_dataframe(_df: pd.DataFrame, _filter: str = '') -> pd.DataFrame:
+def filter_dataframe(_df, _filter='') -> pd.DataFrame:
     """Filter null values from a DataFrame, with an optional filter.
     Filtering expected columns and expected search values.
 

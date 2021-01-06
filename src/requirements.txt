@@ -7,3 +7,4 @@ python-dotenv==0.15.0
 txmongo==19.2.0
 kafka-python==2.0.2
 retrying==1.3.3
+mongomock==3.22.0
