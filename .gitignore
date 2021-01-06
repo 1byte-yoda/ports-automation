@@ -1,10 +1,24 @@
+# vscode
 .vscode
+
+# virtual environment
 venv
+
+# python cache
 __pycache__
-data
-logs_*.txt
+
+# environment mappings
+.env
+
+# expected output
 *.json
+
+# scrapy
+logs_*.txt
+*.html
+
+# airflow
+*.cfg
 *.swp
 logs
-*.html
-*.cfg
+data
