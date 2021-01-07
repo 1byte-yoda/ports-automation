@@ -36,7 +36,12 @@ class LoadToJsonOperator(BaseOperator):
         self._date_format = '%Y-%m-%d_%H-%M-%S'
 
     def execute(self, context):
-        """ """
+        """
+        Query data from Postgresql master database and
+        then write into a json file.
+
+        The default json file name is the table name + the utc time.
+        """
         self.log.info('LoadToJsonOperator Starting...')
         try:
             self.log.info("Initializing Postgres Master DB Connection...")
