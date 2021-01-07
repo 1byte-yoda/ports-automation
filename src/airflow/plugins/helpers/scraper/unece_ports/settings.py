@@ -50,4 +50,4 @@ PORTS_TABLE = os.environ.get('PORTS_TABLE')
 
 
 # Uncomment when in development
-# CLOSESPIDER_ITEMCOUNT = 1
+CLOSESPIDER_ITEMCOUNT = 1

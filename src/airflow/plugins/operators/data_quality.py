@@ -28,6 +28,7 @@ class DataQualityCheckOperator(BaseOperator):
         super().__init__(**kwargs)
         self._tables = tables
         self._postgres_conn_id = postgres_config.conn_id
+        self._datetime_format = "%m-%d-%Y %H:%M:%S"
 
     def execute(self, context):
         """Does data quality checks for each table in table list.
@@ -39,15 +40,25 @@ class DataQualityCheckOperator(BaseOperator):
         psql_conn = psql_hook.get_conn()
         psql_cursor = psql_conn.cursor()
         table_row_count = SqlQueries.table_row_count
+        table_updated_count = SqlQueries.table_updated_count
         try:
             for table in self._tables:
-                ports_table_data_count = table_row_count.format(
+                table_data_count = table_row_count.format(
                     table=table
                 )
-                psql_cursor.execute(ports_table_data_count)
+                table_updated_data_count = table_updated_count.format(
+                    table=table,
+                    execution_date=context.get(
+                        'execution_date'
+                    ).strftime(self._datetime_format)
+                )
+                psql_cursor.execute(table_data_count)
                 result = psql_cursor.fetchone()
-                row_count = result.get('count')
-                if not row_count:
+                data_count = result.get('count')
+                psql_cursor.execute(table_updated_data_count)
+                result = psql_cursor.fetchone()
+                updated_data_count = result.get('total_updates')
+                if not any([data_count, updated_data_count]):
                     error = (
                         "Data quality check failed. "
                         f"{table} returned no results."
@@ -56,7 +67,8 @@ class DataQualityCheckOperator(BaseOperator):
                     raise ValueError(error)
                 self.log.info(
                     f"Data quality on table {table} check passed "
-                    f"with {row_count} records."
+                    f"with {data_count} total records "
+                    f"and {updated_data_count} total updated records."
                 )
         except OperationalError:
             self.log.error("DataQualityCheckOperator failed.")

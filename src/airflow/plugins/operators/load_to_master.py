@@ -51,11 +51,13 @@ class LoadToMasterdbOperator(BaseOperator):
         )
         self.log.info("Loading Staging data to Master Database...")
         try:
-            for document in ports_collection.find():
+            print(ports_collection.count_documents({}))
+            for document in ports_collection.find({}):
                 staging_id = document.get('_id').__str__()
                 document['staging_id'] = staging_id
                 if staging_id != 'None':
                     document.pop('_id')
+                
                 psql_cursor.execute(
                     ports_table_insert,
                     document
