@@ -3,6 +3,7 @@
 
 from unittest import TestCase
 from mongomock import MongoClient
+from scrapy.utils.test import get_crawler
 from helpers.scraper.unece_ports.spiders import (
     ports_spider
 )
@@ -28,14 +29,26 @@ class BaseTest(TestCase):
 
 class MongodbPipelineBaseTest(TestCase):
     def setUp(self):
+        _mongodb_uri = 'mongo://mock:mockpassword@mockhost:27017'
+        config = [_mongodb_uri, 'unece_staging', 'ports']
+        self._crawler = get_crawler(ports_spider.PortsSpider)
+        self._crawler.settings = {
+            'MONGO_DB_URI': config[0],
+            'STAGING_PORTS_DB': config[1],
+            'PORTS_TABLE': config[2]
+        }
+        self._mock_spider = self._crawler._create_spider(
+            **self._get_spiderargs()
+        )
         self._client = MongoClient()
         self._db = self._client.unece_staging
-        _mongodb_uri = 'mongodb://mock:mockpassword@mockhost:27017'
-        config = [_mongodb_uri, 'unece_staging', 'ports']
-        self.pipeline = MongodbPipeline(config=config)
+        self.pipeline = MongodbPipeline.from_crawler(self._crawler)
         self.pipeline.collection = self._db.ports
-        self._mock_spider = ports_spider.PortsSpider()
 
     def tearDown(self):
         self.pipeline.close_spider(self._mock_spider)
         self._client.close()
+
+    def _get_spiderargs(self):
+        allowed_domains = ['scrapytest.org']
+        return dict(name='foo', allowed_domains=allowed_domains)

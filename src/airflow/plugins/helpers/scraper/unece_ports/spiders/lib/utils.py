@@ -3,6 +3,7 @@
 
 from collections import namedtuple
 import pandas as pd
+from pandas import DataFrame
 from helpers.scraper.unece_ports.item_loaders.processors import (
     _DEFAULT_VALUE
 )
@@ -12,7 +13,7 @@ EXPECTED_COLUMNS = ['NameWoDiacritics', 'LOCODE', 'Coordinates']
 SEARCH_COLUMN = 'Function'
 
 
-def get_data(response_body) -> namedtuple:
+def get_data(response_body: bytes) -> namedtuple:
     """
     Parse table elements from response body and store into DataFrames.
 
@@ -21,8 +22,12 @@ def get_data(response_body) -> namedtuple:
     :return namedtuple Ports:
         namedtuple instance that contains an iterable and string attribute
     """
-    _, df_country, df = pd.read_html(response_body)
-    if len(df) and len(df_country):
+    try:
+        _, df_country, df = pd.read_html(response_body)
+    except ValueError:
+        raise ValueError('not enough values to unpack DataFrame')
+    dfs_not_empty = len(df) and len(df_country)
+    if dfs_not_empty:
         country_name = df_country.iloc[0][0]
         df.columns = df.iloc[0]
         df = df.drop(df.index[0])
@@ -40,19 +45,20 @@ def get_data(response_body) -> namedtuple:
                 iter=df.iterrows(),
                 countryName=country_name
             )
-    return 0
 
 
-def filter_dataframe(_df, _filter='') -> pd.DataFrame:
+def filter_dataframe(_df: DataFrame, _filter: str = '') -> DataFrame:
     """Filter null values from a DataFrame, with an optional filter.
     Filtering expected columns and expected search values.
 
     :param DataFrame _df:
         DataFrame to be filtered.
     :param str _filter:
-        str used to filter SEARCH_COLUMN constant
+        string to be used on filtering df[SEARCH_COLUMN],
+        default is a blank string.
     :return DataFrame _df:
-        filtered DataFrame
+        filtered DataFrame with the expected columns
+        and without null like values
     """
     _df = _df.fillna(_DEFAULT_VALUE)
     _df = _df[_df[SEARCH_COLUMN].str.contains(_filter)]

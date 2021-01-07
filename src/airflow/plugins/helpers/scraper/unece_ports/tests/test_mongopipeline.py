@@ -1,13 +1,30 @@
 # helpers/scraper/unece_ports/tests/test_mongopipeline.py
 
 
+from twisted.internet import defer
+from scrapy.exceptions import NotConfigured
 from helpers.scraper.unece_ports.tests.base import (
     MongodbPipelineBaseTest
 )
-from twisted.internet import defer
+from helpers.scraper.unece_ports.pipelines.mongodb import (
+    MongodbPipeline,
+    TransactionError
+)
 
 
 class MongodbPipelineTest(MongodbPipelineBaseTest):
+
+    @defer.inlineCallbacks
+    def test_mongo_pipeline_pymongo_transaction_error(self):
+        with self.assertRaises(TransactionError) as exc_info:
+            yield self.pipeline.process_item(
+                {'foo', 'bar'}, self._mock_spider
+            )
+        self.assertIn(
+            'error occured during transaction',
+            str(exc_info.exception)
+        )
+
     @defer.inlineCallbacks
     def _test_process_item(self, total_items=10):
         item = dict()
@@ -39,3 +56,13 @@ class MongodbPipelineTest(MongodbPipelineBaseTest):
         collection = self.pipeline.collection
         total_inserted = collection.count_documents({})
         self.assertEqual(total_inserted, expected_items)
+
+    def test_mongo_pipeline_not_configured(self):
+        with self.assertRaises(NotConfigured) as exc_info:
+            self._crawler.settings = {
+                'MONGO_DB_URI': None,
+                'STAGING_PORTS_DB': None,
+                'PORTS_TABLE': None
+            }
+            MongodbPipeline.from_crawler(self._crawler)
+        self.assertIn('not configured', str(exc_info.exception))

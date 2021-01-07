@@ -23,3 +23,7 @@ logs_*.txt
 *.swp
 logs
 data
+
+# testing
+htmlcov
+.coverage*

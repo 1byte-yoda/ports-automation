@@ -6,3 +6,5 @@ logs_*.txt
 Dockerfile*
 .git
 logs
+htmlcov
+.coverage*

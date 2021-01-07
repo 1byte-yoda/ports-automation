@@ -1,8 +1,14 @@
-import pymongo
+# helpers/scraper/unece_ports/pipelines/mongodb/__init__.py
+
+
 import traceback
 from scrapy.exceptions import NotConfigured
 from twisted.internet import defer
 from txmongo.connection import ConnectionPool
+
+
+class TransactionError(Exception):
+    """Raises when mongodb transaction occur."""
 
 
 class MongodbPipeline(object):
@@ -23,7 +29,7 @@ class MongodbPipeline(object):
 
         # If doesn't exist, disable the pipeline
         if not any(config):
-            raise NotConfigured
+            raise NotConfigured('Mongodb parameters not configured')
 
         # Create the class
         return cls(config)
@@ -57,13 +63,13 @@ class MongodbPipeline(object):
                 replacement=item,
                 upsert=True
             )
-        except pymongo.errors.OperationFailure:
+        except Exception:
             if self.report_connection_error:
                 logger.error("Can't connect to MongoDB: %s" %
                              self.mongo_url)
                 self.report_connection_error = False
-        except Exception:
-            print(traceback.format_exc())
+                logger.error(traceback.format_exc())
+                raise TransactionError('An error occured during transaction.')
 
         # Return the item for the next stage
         defer.returnValue(item)

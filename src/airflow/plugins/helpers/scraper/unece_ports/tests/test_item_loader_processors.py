@@ -43,7 +43,7 @@ class PortsSpiderItemLoaderProcessorTest(BaseTest):
         Test if process_country_name handles missing country name correctly.
         """
         missing_value1 = self.process_country_name('\xa0\xa0\xa0\xa0\t')
-        missing_value2 = self.process_country_name('\xa0\xa0\xa0\xa0\t')
+        missing_value2 = self.process_country_name(None)
         self.assertEqual(missing_value1, 'missing_value')
         self.assertEqual(missing_value2, 'missing_value')
 
