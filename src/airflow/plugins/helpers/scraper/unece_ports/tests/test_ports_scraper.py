@@ -9,7 +9,6 @@ from helpers.scraper.unece_ports.tests import (
 from helpers.scraper.unece_ports.tests.base import (
     BaseTest
 )
-import sys
 
 
 class PortsSpiderTest(BaseTest):
@@ -91,7 +90,7 @@ class PortsSpiderTest(BaseTest):
 
     def _unlocode_url_matcher(self, url: str) -> Union[Match, None]:
         """Function that identifies if a url matched a pattern.
-        
+
         Sample match:
             https://service.unece.org/trade/locode/af.htm
         :param str url:
@@ -101,7 +100,7 @@ class PortsSpiderTest(BaseTest):
             None otherwise
         """
         pattern = (
-            'https://service.unece.org/trade/locode/'
-            '[a-z]{2}\.htm'
+            r'https://service.unece.org/trade/locode/'
+            r'[a-z]{2}\.htm'
         )
         return match(pattern, url)
