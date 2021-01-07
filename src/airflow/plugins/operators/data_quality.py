@@ -38,9 +38,9 @@ class DataQualityCheckOperator(BaseOperator):
         psql_hook = PostgresHook(postgres_conn_id=self._postgres_conn_id)
         psql_conn = psql_hook.get_conn()
         psql_cursor = psql_conn.cursor()
+        table_row_count = SqlQueries.table_row_count
         try:
             for table in self._tables:
-                table_row_count = SqlQueries.table_row_count
                 ports_table_data_count = table_row_count.format(
                     table=table
                 )

@@ -3,6 +3,9 @@ from airflow.utils.decorators import apply_defaults
 
 
 class StageDatatoMongodb(BaseOperator):
+    """
+    Airflow operator that acts as a placeholder for staging phase.
+    """
     ui_color = '#F98866'
 
     @apply_defaults

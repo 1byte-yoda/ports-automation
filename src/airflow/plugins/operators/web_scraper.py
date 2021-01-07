@@ -1,3 +1,4 @@
+from typing import Callable
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
@@ -7,12 +8,14 @@ class WebScraperOperator(BaseOperator):
     https://unece.org/cefact/unlocode-code-list-country-and-territory
 
     Uses Scrapy module as the external module for scraping.
+    Internally, this operator directly stages data into MongoDB
+    via a scrapy item pipeline.
     """
 
     ui_color = '#80BD9E'
 
     @apply_defaults
-    def __init__(self, web_scraper_func, *args, **kwargs):
+    def __init__(self, web_scraper_func: Callable, *args, **kwargs):
         """Airflow Operator that scrapes country unlocodes from
         https://unece.org/cefact/unlocode-code-list-country-and-territory
 

@@ -49,4 +49,5 @@ STAGING_PORTS_DB = os.environ.get('STAGING_PORTS_DB')
 PORTS_TABLE = os.environ.get('PORTS_TABLE')
 
 
-CLOSESPIDER_ITEMCOUNT = 1
+# Uncomment when in development
+# CLOSESPIDER_ITEMCOUNT = 1

@@ -46,8 +46,8 @@ class LoadToJsonOperator(BaseOperator):
             execution_date = context.get('execution_date')
             if execution_date:
                 execution_date = execution_date.format(self._date_format)
+            select_all_query_to_json = SqlQueries.select_all_query_to_json
             for table in self._tables:
-                select_all_query_to_json = SqlQueries.select_all_query_to_json
                 ports_select_all = select_all_query_to_json.format(
                     table=table
                 )
