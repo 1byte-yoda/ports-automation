@@ -32,7 +32,7 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - ./src/db/.env.example.db
+      - ./src/db/.env.db.example
     volumes:
       - postgresql_db_container:/data/postgresql_db
 
