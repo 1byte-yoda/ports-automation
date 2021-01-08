@@ -82,6 +82,7 @@ def cov():
         print('Coverage Summary:')
         COV.report()
         COV.html_report()
+        COV.xml_report()
         return 0
     import sys
     sys.exit(result)
