@@ -4,13 +4,13 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.email_operator import EmailOperator
 from airflow.operators.slack_operator import SlackAPIPostOperator
 from airflow.models import Variable
-from helpers import crawl_unece_ports
+from helpers import crawl_unece_ports, SqlQueries
 from configs import MongoConfig, PostgresConfig
 from operators import (
     WebScraperOperator,
     StageDatatoMongodb,
     DataQualityCheckOperator,
-    LoadToMasterdbOperator,
+    TransformAndLoadToMasterdbOperator,
     LoadToJsonOperator
 )
 
@@ -57,10 +57,12 @@ stage_data_to_mongodb = StageDatatoMongodb(
 )
 
 
-load_to_postgres_master_db = LoadToMasterdbOperator(
+load_to_postgres_master_db = TransformAndLoadToMasterdbOperator(
     mongo_config=mongo_staging_config,
     postgres_config=postgres_master_config,
-    task_id='Load_to_postgres_master_db',
+    task_id='Transform_and_load_to_postgres',
+    query=SqlQueries.ports_table_insert,
+    query_params={"updated_at": datetime.utcnow()},
     dag=dag
 )
 
@@ -69,6 +71,10 @@ run_data_quality_checks = DataQualityCheckOperator(
     tables=['ports'],
     postgres_config=postgres_master_config,
     task_id='Run_data_quality_checks',
+    queries={
+        "ports_row_count": SqlQueries.ports_row_count,
+        "ports_updated_count": SqlQueries.ports_updated_count
+    },
     dag=dag
 )
 

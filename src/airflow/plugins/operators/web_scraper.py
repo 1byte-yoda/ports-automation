@@ -1,3 +1,4 @@
+import traceback
 from typing import Callable
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
@@ -33,5 +34,7 @@ class WebScraperOperator(BaseOperator):
         try:
             self._web_scraper_func()
         except Exception:
-            self.log.error('WebScraperOperator Failed.')
-        self.log.info('WebScraperOperator Successful!')
+            self.log.error(traceback.format_exc())
+            self.log.error('WebScraperOperator FAILED.')
+            raise Exception("An error occured while scraping!")
+        self.log.info('WebScraperOperator SUCCESS!')

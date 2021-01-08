@@ -60,21 +60,21 @@ class LoadToJsonOperator(BaseOperator):
                 file_name = f"{table}_{execution_date}.json"
                 self.save_to_json(psql_cursor, table, file_name)
         except OperationalError:
-            self.log.error("LoadToJsonOperator failed.")
-            raise Exception("LoadToJsonOperator failed. OperationalError")
+            self.log.error("LoadToJsonOperator FAILED.")
+            raise Exception("LoadToJsonOperator FAILED. OperationalError")
         except OSError:
-            self.log.error("Writting JSON file failed. Invalid file name.")
+            self.log.error("Writting JSON file FAILED. Invalid file name.")
             raise OSError(
-                "LoadToJsonOperator failed. "
+                "LoadToJsonOperator FAILED. "
                 f"Invalid file name: {file_name}."
             )
         except Exception:
             self.log.error(traceback.format_exc())
-            raise Exception("LoadToJsonOperator failed.")
+            raise Exception("LoadToJsonOperator FAILED.")
         finally:
             self.log.info('Closing database connections...')
             psql_conn.close()
-        self.log.info('LoadToJsonOperator Success!')
+        self.log.info('LoadToJsonOperator SUCCESS!')
 
     def save_to_json(self, cursor, key, file_name):
         """Save SQL query results into a json file through streaming.
@@ -100,11 +100,11 @@ class LoadToJsonOperator(BaseOperator):
                         subarray.write(row)
         except ValueError:
             self.log.error(
-                "Writting JSON file failed. "
+                "Writting JSON file FAILED. "
                 "Invalid value found."
             )
             raise ValueError(
-                "LoadToJsonOperator failed. "
+                "LoadToJsonOperator FAILED. "
                 "Cannot write invalid value(s)."
             )
-        self.log.info(f'JSON file exported successfuly on path: {file_name}.')
+        self.log.info(f'JSON file exported SUCCESSFULLY on path: {file_name}.')

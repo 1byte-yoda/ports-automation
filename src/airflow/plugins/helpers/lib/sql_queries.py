@@ -25,7 +25,17 @@ class SqlQueries:
         );
     """
 
-    table_row_count = "SELECT COUNT(*) FROM {table}"
+    ports_row_count = """
+    SELECT COUNT(*) AS "count"
+    FROM ports
+    WHERE (
+        countryName IS NOT NULL
+        OR portName IS NOT NULL
+        OR unlocode IS NOT NULL
+        OR coordinates IS NOT NULL
+        OR staging_id IS NOT NULL
+    );
+    """
 
     select_all_query_to_json = """
     SELECT id,
@@ -35,15 +45,22 @@ class SqlQueries:
     FROM {table};
     """
 
-    table_updated_count = """
+    ports_updated_count = """
     SELECT COUNT(
         CASE
         WHEN TO_CHAR(updated_at, 'mm-dd-YYYY HH:MM')
-            BETWEEN TO_CHAR(DATE '{execution_date}' - INTERVAL '8' MINUTE, 'mm-dd-YYYY HH:MM')
-            AND TO_CHAR(DATE '{execution_date}', 'mm-dd-YYYY HH:MM')
+            BETWEEN TO_CHAR(NOW() - INTERVAL '30' MINUTE, 'mm-dd-YYYY HH:MM')
+            AND TO_CHAR(NOW(), 'mm-dd-YYYY HH:MM')
         THEN id
         ELSE NULL
         END
-    ) AS total_updates 
-    FROM {table};
+    ) AS "count"
+    FROM ports
+    WHERE (
+        countryName IS NOT NULL
+        OR portName IS NOT NULL
+        OR unlocode IS NOT NULL
+        OR coordinates IS NOT NULL
+        OR staging_id IS NOT NULL
+    );
     """
