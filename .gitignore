@@ -16,7 +16,6 @@ __pycache__
 
 # scrapy
 logs_*.txt
-*.html
 
 # airflow
 *.cfg
