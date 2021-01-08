@@ -15,7 +15,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 before_script:
-  - docker-compose up --build -d
+  - docker-compose -f docker-compose-dev.yml up --build -d
 
 script:
   - docker-compose run airflow python ./plugins/manage.py test

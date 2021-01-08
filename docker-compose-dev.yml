@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+  airflow:
+    build:
+      context: ./src
+      dockerfile: Dockerfile.airflow.dev
+    image: puckel/docker-airflow:latest
+    restart: always
+    container_name: airflow
+    volumes:
+      - ./src/airflow/dags:/usr/local/airflow/dags
+      - ./src/airflow/plugins:/usr/local/airflow/plugins
+      - ./src/airflow/output:/usr/local/airflow/output
+      - ./src/airflow/airflow.cfg:/usr/local/airflow/airflow.cfg
+      - ./src/airflow/tests:/usr/local/airflow/tests
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgresqldb
+    healthcheck:
+      test: ["CMD", "nc", "-z", "airflow", "8080"]
+      timeout: 30s
+      interval: 30s
+      retries: 10
+
+  postgresqldb:
+    container_name: postgresqldb
+    build:
+      context: ./src/db
+      dockerfile: Dockerfile.db.dev
+    ports:
+      - 5432:5432
+    env_file:
+      - ./src/db/.env.db
+    volumes:
+      - postgresql_db_container:/data/postgresql_db
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.4.2-bionic
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/mongo_db
+
+volumes:
+  mongodb_data_container:
+  postgresql_db_container:
