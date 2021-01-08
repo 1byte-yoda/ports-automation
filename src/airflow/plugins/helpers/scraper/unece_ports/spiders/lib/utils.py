@@ -1,19 +1,17 @@
 # helpers/scraper/unece_ports/spiders/lib/utils.py
 
 
+from logging import Logger
 from collections import namedtuple
 import pandas as pd
 from pandas import DataFrame
-from helpers.scraper.unece_ports.item_loaders.processors import (
-    _DEFAULT_VALUE
-)
 
 
 EXPECTED_COLUMNS = ['NameWoDiacritics', 'LOCODE', 'Coordinates']
 SEARCH_COLUMN = 'Function'
 
 
-def get_data(response_body: bytes) -> namedtuple:
+def get_data(response_body: bytes, logger: Logger) -> namedtuple:
     """
     Parse table elements from response body and store into DataFrames.
 
@@ -25,26 +23,29 @@ def get_data(response_body: bytes) -> namedtuple:
     try:
         _, df_country, df = pd.read_html(response_body)
     except ValueError:
-        raise ValueError('not enough values to unpack DataFrame')
-    dfs_not_empty = len(df) and len(df_country)
-    if dfs_not_empty:
-        country_name = df_country.iloc[0][0]
-        df.columns = df.iloc[0]
-        df = df.drop(df.index[0])
-        valid_columns = (
-            column in list(df.columns)
-            for column in EXPECTED_COLUMNS + [SEARCH_COLUMN]
+        logger.info(
+            'Cannot scrape this website. '
+            'Tables to be scraped has changed its structure. '
+            'Please check the source website.'
         )
-        if all(valid_columns):
-            df = filter_dataframe(df, "1")
-            Ports = namedtuple(
-                typename='Ports',
-                field_names=['iter', 'countryName']
-            )
-            return Ports(
-                iter=df.iterrows(),
-                countryName=country_name
-            )
+        return 0
+    country_name = df_country.iloc[0][0]
+    df.columns = df.iloc[0]
+    df = df.drop(df.index[0])
+    valid_columns = (
+        column in list(df.columns)
+        for column in EXPECTED_COLUMNS + [SEARCH_COLUMN]
+    )
+    if all(valid_columns):
+        df = filter_dataframe(df, "1")
+        Ports = namedtuple(
+            typename='Ports',
+            field_names=['iter', 'countryName']
+        )
+        return Ports(
+            iter=df.iterrows(),
+            countryName=country_name
+        )
 
 
 def filter_dataframe(_df: DataFrame, _filter: str = '') -> DataFrame:
@@ -58,9 +59,7 @@ def filter_dataframe(_df: DataFrame, _filter: str = '') -> DataFrame:
         default is a blank string.
     :return DataFrame _df:
         filtered DataFrame with the expected columns
-        and without null like values
     """
-    _df = _df.fillna(_DEFAULT_VALUE)
     _df = _df[_df[SEARCH_COLUMN].str.contains(_filter)]
     _df = _df[EXPECTED_COLUMNS]
     return _df

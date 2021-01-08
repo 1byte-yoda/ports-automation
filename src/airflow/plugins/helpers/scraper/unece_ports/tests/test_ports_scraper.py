@@ -46,21 +46,23 @@ class PortsSpiderTest(BaseTest):
         )
         self._test_item_results(results, 12)
 
-    def test_parse_ports_pandas_no_table_found_raises_value_error(self):
+    def test_parse_ports_pandas_no_table_found_handles_correctly(self):
         """
-        Test if scraper handles error related to changes in website structure.
+        Test pandas scraper handles error related to changes on the website.
         """
-        with self.assertRaises(ValueError) as exc_info:
-            results = self.spider.parse_port_pandas(
-                fake_response_from_file(
-                    file_name='response/ports/no_table_elem.html',
-                )
+        results = self.spider.parse_port_pandas(
+            fake_response_from_file(
+                file_name='response/ports/no_table_elem.html',
             )
-            next(results)
-        self.assertIn(
-            'not enough values to unpack DataFrame',
-            str(exc_info.exception)
         )
+        for item in results:
+            self.assertIn('portName', item)
+            self.assertIn('coordinates', item)
+            self.assertIn('unlocode', item)
+            self.assertIn('countryName', item)
+            self.assertEqual('no_available_port', item['coordinates'])
+            self.assertEqual('no_available_port', item['unlocode'])
+            self.assertEqual('no_available_port', item['portName'])
 
     def test_parse_ports_xpath(self):
         """
@@ -70,6 +72,24 @@ class PortsSpiderTest(BaseTest):
             fake_response_from_file('response/ports/sample.html')
         )
         self._test_item_results(results, 12)
+
+    def test_parse_ports_xpath_no_table_found_handles_correctly(self):
+        """
+        Test if xpath scraper handles error related to changes on the website.
+        """
+        results = self.spider.parse_port_xpath(
+            fake_response_from_file(
+                file_name='response/ports/no_table_elem.html',
+            )
+        )
+        for item in results:
+            self.assertIn('portName', item)
+            self.assertIn('coordinates', item)
+            self.assertIn('unlocode', item)
+            self.assertIn('countryName', item)
+            self.assertEqual('no_available_port', item['coordinates'])
+            self.assertEqual('no_available_port', item['unlocode'])
+            self.assertEqual('no_available_port', item['portName'])
 
     def _test_item_results(self, results: Generator, expected_length: int):
         """Helper function that loops over spider items.
@@ -82,7 +102,10 @@ class PortsSpiderTest(BaseTest):
         count = 0
         for item in results:
             count += 1
-            self.assertEqual(item['countryName'], 'Guatemala')
+            self.assertEqual(
+                ' '.join(item['countryName'].split()),
+                '(GT) GUATEMALA'
+            )
             self.assertIsNotNone(item['portName'])
             self.assertIsNotNone(item['unlocode'])
             self.assertIsNotNone(item['coordinates'])

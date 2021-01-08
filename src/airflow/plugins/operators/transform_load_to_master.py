@@ -8,9 +8,6 @@ from pymongo.errors import OperationFailure
 from psycopg2.errors import OperationalError
 
 
-_DEFAULT_VALUE = 'missing_value'
-
-
 class TransformAndLoadToMasterdbOperator(BaseOperator):
     """
     Airflow operator that transfers data from staging db to master db.
@@ -19,8 +16,8 @@ class TransformAndLoadToMasterdbOperator(BaseOperator):
 
     @apply_defaults
     def __init__(
-        self, mongo_config, postgres_config, query, query_params=None,
-        *args, **kwargs
+        self, mongo_config, postgres_config, processor, query,
+        query_params=None, *args, **kwargs
     ):
         """
         Airflow operator that transfers data from staging db to master db.
@@ -31,6 +28,9 @@ class TransformAndLoadToMasterdbOperator(BaseOperator):
         :param PostgresConfig postgres_config:
             instance of PostgresConfig class that provides connection
             parameters for Postgres connection.
+        :param PortsItemProcessor processor:
+            class that is responsible for processing ports item,
+            this processor handles dictionary objects.
         :param str query:
             string object that contains sql query for upsertion
         :param Union[None, Dict] query_params:
@@ -40,9 +40,10 @@ class TransformAndLoadToMasterdbOperator(BaseOperator):
         self._postgres_conn_id = postgres_config.conn_id
         self._mongo_conn_id = mongo_config.conn_id
         self._mongo_collection = mongo_config.collection
+        self._processor = processor
         self._sql_query = query
         if query_params:
-            self._sql_query = self.format_query(
+            self._sql_query = self._format_query(
                 query=self._sql_query,
                 parameters=query_params
             )
@@ -65,10 +66,11 @@ class TransformAndLoadToMasterdbOperator(BaseOperator):
         psql_cursor = psql_conn.cursor()
         self.log.info("Loading Staging data to Master Database...")
         try:
-            for document in ports_collection.find({}):
+            for idx, document in enumerate(ports_collection.find({})):
+                document = self._processor.process_item(document)
                 staging_id = document.get('_id').__str__()
-                document['staging_id'] = staging_id
                 if staging_id != 'None':
+                    document['staging_id'] = staging_id
                     document.pop('_id')
                 psql_cursor.execute(self._sql_query, document)
             psql_conn.commit()
@@ -79,11 +81,12 @@ class TransformAndLoadToMasterdbOperator(BaseOperator):
             self.log.error(traceback.format_exc())
             raise Exception("LoadToMasterdbOperator FAILED.")
         finally:
-            self.log.info('Closing database connection...')
+            self.log.info('Closing database connections...')
             psql_conn.close()
             mongo_hook.close_conn()
+        self.log.info(f'Loaded {idx+1} records into Postgres Database.')
         self.log.info('LoadToMasterdbOperator SUCCESS!')
 
-    def format_query(self, query: str, parameters: Union[None, Dict]) -> Dict:
+    def _format_query(self, query: str, parameters: Union[None, Dict]) -> Dict:
         """Format all queries with values specified by paramters dictionary."""
         return query.format(**parameters)

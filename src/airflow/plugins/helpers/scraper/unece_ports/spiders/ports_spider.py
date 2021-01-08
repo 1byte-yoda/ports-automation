@@ -10,12 +10,17 @@ from helpers.scraper.unece_ports.items import (
 from helpers.scraper.unece_ports.item_loaders import (
     PortItemLoader
 )
-from helpers.scraper.unece_ports.item_loaders.processors import (
-    DEFAULT_ITEM
-)
 from helpers.scraper.unece_ports.spiders.lib.utils import (
     get_data
 )
+
+
+_NO_AVAILABLE_PORT = 'no_available_port'
+DEFAULT_ITEM = {
+    'portName': _NO_AVAILABLE_PORT,
+    'coordinates': _NO_AVAILABLE_PORT,
+    'unlocode': _NO_AVAILABLE_PORT
+}
 
 
 class PortsSpider(Spider):
@@ -53,7 +58,10 @@ class PortsSpider(Spider):
         @returns items 1
         @scrapes countryName portName coordinates unlocode
         """
-        ports = get_data(response_body=response.body)
+        ports = get_data(
+            response_body=response.body,
+            logger=self.logger
+        )
         if ports and ports.iter:
             ports_iterator = ports.iter
             for _, row in ports_iterator:
