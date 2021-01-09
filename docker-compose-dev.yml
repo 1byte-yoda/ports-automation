@@ -12,7 +12,7 @@ services:
       - ./src/airflow/dags:/usr/local/airflow/dags
       - ./src/airflow/plugins:/usr/local/airflow/plugins
       - ./src/airflow/output:/usr/local/airflow/output
-      - ./src/airflow/airflow.cfg:/usr/local/airflow/airflow.cfg
+      - ./src/airflow/airflow.cfg.example:/usr/local/airflow/airflow.cfg
       - ./src/airflow/tests:/usr/local/airflow/tests
     ports:
       - 8080:8080
