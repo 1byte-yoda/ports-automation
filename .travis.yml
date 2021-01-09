@@ -20,10 +20,6 @@ before_script:
 script:
   - docker-compose -f docker-compose-dev.yml run airflow flake8
   - docker-compose -f docker-compose-dev.yml run airflow python ./plugins/manage.py test
-  - docker-compose -f docker-compose-dev.yml run airflow python ./plugins/manage.py cov
 
 after_script:
   - docker-compose down
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)

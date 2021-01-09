@@ -26,3 +26,4 @@ data
 # testing
 htmlcov
 .coverage*
+coverage.*
