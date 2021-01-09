@@ -59,14 +59,14 @@ def run_scraper_pipeline_tests():
     scraper_result = TextTestRunner(verbosity=2).run(scraper_tests)
     total_time = time.time() - start_time
     if scraper_result.wasSuccessful():
-        return total_tests, total_time
-    return 0
+        return total_tests, total_time, scraper_result.wasSuccessful()
+    return [0]*3
 
 
 @cli.command('test')
 def run_tests():
     """Runs the tests without code coverage"""
-    scraper_pipeline_tests, perf_time = run_scraper_pipeline_tests()
+    scraper_tests, perf_time, scraper_success = run_scraper_pipeline_tests()
     test_loader = TestLoader()
     plugins_tests_dir = join(PLUGINS_BASE_DIR, 'tests')
     plugin_tests = test_loader.discover(plugins_tests_dir, pattern="test*.py")
@@ -74,10 +74,10 @@ def run_tests():
     plugins_result = TextTestRunner(verbosity=2).run(plugin_tests)
     total_time = start_time - time.time()
     total_runtime = perf_time - total_time
-    total_tests = scraper_pipeline_tests + plugin_tests.countTestCases()
+    total_tests = scraper_tests + plugin_tests.countTestCases()
     print("\n", "*"*70)
     print(f"Ran {total_tests} tests in {round(total_runtime, 3)}s\n")
-    if plugins_result.wasSuccessful() and scraper_pipeline_tests:
+    if plugins_result.wasSuccessful() and scraper_success:
         print("OK\n")
         return 0
     print("FAILED\n")
