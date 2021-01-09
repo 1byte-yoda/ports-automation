@@ -12,11 +12,6 @@ from helpers.scraper.unece_ports.pipelines.mongodb import (
 )
 
 
-class BaseTest(TestCase):
-    def setUp(self):
-        self.spider = ports_spider.PortsSpider()
-
-
 class MongodbPipelineBaseTest(TestCase):
     def setUp(self):
         _mongodb_uri = 'mongo://mock:mockpassword@mockhost:27017'

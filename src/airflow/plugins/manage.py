@@ -1,5 +1,7 @@
 # plugins/manage_scrapers.py
 
+
+import time
 from os.path import join
 import click
 import coverage
@@ -8,14 +10,20 @@ from unittest import TestLoader, TextTestRunner
 
 # Scrapy's spider base directory
 SCRAPER_BASE_DIR = 'plugins/helpers/scraper/unece_ports/'
+
+# Airflow plugins base directory
 PLUGINS_BASE_DIR = 'plugins'
+
+# Airflow dags base directory
+DAGS_BASE_DIR = 'dags'
 
 
 COV = coverage.coverage(
     branch=True,
     include=[
         join(SCRAPER_BASE_DIR, '*'),
-        join(PLUGINS_BASE_DIR, 'helpers/lib/*')
+        join(PLUGINS_BASE_DIR, 'helpers/lib/*'),
+        join(DAGS_BASE_DIR, '*')
     ],
     omit=[
         join(SCRAPER_BASE_DIR, 'tests/*'),
@@ -40,20 +48,39 @@ def cli():
     pass
 
 
-@cli.command('test')
-def run_scraper_tests():
-    """Runs the tests without code coverage"""
+def run_scraper_pipeline_tests():
+    """Runs the tests for scraper's pipeline"""
+    print("RUNNING SCRAPER's PIPELINE TESTS ....")
     test_loader = TestLoader()
     scraper_tests_dir = join(SCRAPER_BASE_DIR, 'tests')
     scraper_tests = test_loader.discover(scraper_tests_dir, pattern="test*.py")
+    total_tests = scraper_tests.countTestCases()
+    start_time = time.time()
     scraper_result = TextTestRunner(verbosity=2).run(scraper_tests)
+    total_time = time.time() - start_time
+    if scraper_result.wasSuccessful():
+        return total_tests, total_time
+    return 0
 
+
+@cli.command('test')
+def run_tests():
+    """Runs the tests without code coverage"""
+    scraper_pipeline_tests, perf_time = run_scraper_pipeline_tests()
     test_loader = TestLoader()
     plugins_tests_dir = join(PLUGINS_BASE_DIR, 'tests')
-    plugins_tests = test_loader.discover(plugins_tests_dir, pattern="test*.py")
-    plugins_result = TextTestRunner(verbosity=2).run(plugins_tests)
-    if scraper_result.wasSuccessful() and plugins_result.wasSuccessful():
+    plugin_tests = test_loader.discover(plugins_tests_dir, pattern="test*.py")
+    start_time = time.time()
+    plugins_result = TextTestRunner(verbosity=2).run(plugin_tests)
+    total_time = start_time - time.time()
+    total_runtime = perf_time - total_time
+    total_tests = scraper_pipeline_tests + plugin_tests.countTestCases()
+    print("\n", "*"*70)
+    print(f"Ran {total_tests} tests in {round(total_runtime, 3)}s\n")
+    if plugins_result.wasSuccessful() and scraper_pipeline_tests:
+        print("OK\n")
         return 0
+    print("FAILED\n")
     return 1
 
 
@@ -61,28 +88,19 @@ def run_scraper_tests():
 def cov():
     """Runs the unit tests with coverage."""
     test_loader = TestLoader()
-    scraper_tests_dir = join(SCRAPER_BASE_DIR, 'tests')
-    scraper_tests = test_loader.discover(
-        scraper_tests_dir,
-        pattern="test*.py"
-    )
-    scraper_result = TextTestRunner(verbosity=2).run(scraper_tests)
-
-    test_loader = TestLoader()
     plugins_tests_dir = join(PLUGINS_BASE_DIR, 'tests')
     plugins_tests = test_loader.discover(
         plugins_tests_dir,
         pattern="test*.py"
     )
     plugins_result = TextTestRunner(verbosity=2).run(plugins_tests)
-    result = scraper_result.wasSuccessful() and plugins_result.wasSuccessful()
+    result = plugins_result.wasSuccessful()
     if result:
         COV.stop()
         COV.save()
         print('Coverage Summary:')
         COV.report()
         COV.html_report()
-        COV.xml_report()
         return 0
     import sys
     sys.exit(result)

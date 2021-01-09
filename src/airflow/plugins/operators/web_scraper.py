@@ -33,6 +33,7 @@ class WebScraperOperator(BaseOperator):
         self.log.info('WebScraperOperator Starting...')
         try:
             self._web_scraper_func()
+            pass
         except Exception:
             self.log.error(traceback.format_exc())
             self.log.error('WebScraperOperator FAILED.')

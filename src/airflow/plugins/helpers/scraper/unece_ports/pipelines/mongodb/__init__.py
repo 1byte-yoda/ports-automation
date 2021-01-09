@@ -65,6 +65,7 @@ class MongodbPipeline(object):
             )
         except Exception:
             if self.report_connection_error:
+                pass
                 logger.error("Can't connect to MongoDB: %s" %
                              self.mongo_url)
                 self.report_connection_error = False

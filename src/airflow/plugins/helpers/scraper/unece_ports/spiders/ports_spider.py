@@ -59,8 +59,7 @@ class PortsSpider(Spider):
         @scrapes countryName portName coordinates unlocode
         """
         ports = get_data(
-            response_body=response.body,
-            logger=self.logger
+            response_body=response.body
         )
         if ports and ports.iter:
             ports_iterator = ports.iter

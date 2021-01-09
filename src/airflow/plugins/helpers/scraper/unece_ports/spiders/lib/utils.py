@@ -11,7 +11,10 @@ EXPECTED_COLUMNS = ['NameWoDiacritics', 'LOCODE', 'Coordinates']
 SEARCH_COLUMN = 'Function'
 
 
-def get_data(response_body: bytes, logger: Logger) -> namedtuple:
+logger = Logger(__file__)
+
+
+def get_data(response_body: bytes) -> namedtuple:
     """
     Parse table elements from response body and store into DataFrames.
 
