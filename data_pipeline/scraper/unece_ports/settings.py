@@ -1,4 +1,4 @@
-# helpers/scraper/unece_ports/settings.py
+# data_pipeline/scraper/unece_ports/settings.py
 
 
 import os

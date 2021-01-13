@@ -1,4 +1,4 @@
-# helpers/scraper/unece_ports/spiders/ports_spider.py
+# data_pipeline/scraper/unece_ports/spiders/ports_spider.py
 
 
 from urllib.parse import urljoin

@@ -1,4 +1,4 @@
-# helpers/scraper/unece_ports/items.py
+# data_pipeline/scraper/unece_ports/items.py
 
 
 from scrapy import Field, Item
