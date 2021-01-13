@@ -18,7 +18,7 @@ before_script:
   - pip install docker-compose-wait==1.2.2
   - docker-compose -f docker-compose-dev.yml up --build -d
   - docker-compose-wait -f docker-compose-dev.yml
-  - docker ps
+  - docker ps -a
 
 script:
   - docker-compose -f docker-compose-dev.yml run airflow flake8
