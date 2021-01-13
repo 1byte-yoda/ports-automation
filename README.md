@@ -15,11 +15,11 @@
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
+      <li><a href="#built-with">Built With</a></li>
         <li>
             <a href="#architecture">Architecture</a>
             <ul><a href="#automation-flow">Automation Flow</a></ul>
         </li>
-        <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
     <li>
@@ -38,7 +38,7 @@
 
 ## About The Project
 
-This project aims to create a data pipeline that can scrape data from a given source. Although designed specifically for ports data, the architecture itself was designed to be extensible to other use cases.
+This project aims to create an automated data pipeline that can scrape data from a given source and persist the data into a database and a json file. Although designed specifically for [ports][ports-data-url] data, the architecture itself was designed to be extensible to adopt to other use cases and technogly stack.
 
 
 </br>
@@ -71,3 +71,4 @@ This project aims to create a data pipeline that can scrape data from a given so
 [code-cov-url]: https://codecov.io/gh/PHMark/ports-automation
 [code-style]: https://img.shields.io/badge/codestyle-flake8-28df99
 [code-style-url]: https://github.com/PHMark/ports-automation
+[ports-data-url]: https://unece.org/cefact/unlocode-code-list-country-and-territory
