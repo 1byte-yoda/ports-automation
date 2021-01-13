@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# data_pipeline/scraper/unece_ports/pipelines/kafka/writer.py
+
+
 from kafka import KafkaProducer, KafkaConsumer
 from retrying import retry
 from scrapy.exporters import PythonItemExporter

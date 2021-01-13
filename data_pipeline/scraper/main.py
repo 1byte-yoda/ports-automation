@@ -1,4 +1,4 @@
-# helpers/scraper/main.py
+# data_pipeline/scraper/main.py
 
 
 import sys

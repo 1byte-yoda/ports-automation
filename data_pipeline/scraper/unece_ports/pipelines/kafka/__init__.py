@@ -1,3 +1,5 @@
+# data_pipeline/scraper/unece_ports/pipelines/kafka/__init__.py
+
 import logging
 from pkg_resources import resource_filename
 from kafka import KafkaAdminClient
