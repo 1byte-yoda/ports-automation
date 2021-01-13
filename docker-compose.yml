@@ -10,20 +10,20 @@ services:
       - postgresqldb
       - mongodb
     volumes:
-      - "./data_pipeline/docker:/root/airflow/docker"
-      - "./data_pipeline/dags:/root/airflow/dags"
-      - "./data_pipeline/scraper:/root/airflow/scraper"
-      - "./data_pipeline/plugins:/root/airflow/plugins"
-      - "./data_pipeline/output:/root/airflow/output"
-      - "./data_pipeline/tests:/root/airflow/tests"
-      - "./data_pipeline/.env:/root/airflow/.env"
-      - "./data_pipeline/htmlcov:/root/airflow/htmlcov"
-      - "./data_pipeline/xmlcov:/root/airflow/xmlcov"
-      - "./data_pipeline/.coveragerc:/root/airflow/.coveragerc"
-      - "./data_pipeline/Makefile:/root/airflow/Makefile"
+      - ./data_pipeline/docker:/root/airflow/docker
+      - ./data_pipeline/dags:/root/airflow/dags
+      - ./data_pipeline/scraper:/root/airflow/scraper
+      - ./data_pipeline/plugins:/root/airflow/plugins
+      - ./data_pipeline/output:/root/airflow/output
+      - ./data_pipeline/tests:/root/airflow/tests
+      - ./data_pipeline/.env:/root/airflow/.env
+      - ./data_pipeline/htmlcov:/root/airflow/htmlcov
+      - ./data_pipeline/xmlcov:/root/airflow/xmlcov
+      - ./data_pipeline/.coveragerc:/root/airflow/.coveragerc
+      - ./data_pipeline/Makefile:/root/airflow/Makefile
 
     ports:
-      - "8080:8080"
+      - 8080:8080
     env_file:
       - ./data_pipeline/.env
     init: true
@@ -44,7 +44,7 @@ services:
     env_file:
       - ./data_pipeline/.env
     volumes:
-      - "postgresqldb:/data/postgresqldb"
+      - postgresqldb:/data/postgresqldb
   
   postgresqldb_test:
     container_name: postgresqldb_test
@@ -56,7 +56,7 @@ services:
     env_file:
       - ./data_pipeline/.env
     volumes:
-      - "postgresqldb_test:/data/postgresqldb_test"
+      - postgresqldb_test:/data/postgresqldb_test
 
   mongodb:
     container_name: mongodb

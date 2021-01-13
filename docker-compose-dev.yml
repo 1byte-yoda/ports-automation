@@ -22,7 +22,7 @@ services:
       - ./data_pipeline/Makefile:/root/airflow/Makefile
 
     ports:
-      - "8080:8080"
+      - 8080:8080
     env_file:
       - ./data_pipeline/.env.example
     init: true
