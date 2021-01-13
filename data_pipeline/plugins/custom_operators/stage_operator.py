@@ -1,3 +1,6 @@
+# data_pipeline/plugins/custom_operators/stage_operator.py
+
+
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
