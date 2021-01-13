@@ -1,10 +1,24 @@
+# vscode
 .vscode
-venv
-__pycache__
-logs_*.txt
-*.json
-Dockerfile*
+
+# git
 .git
-logs
-htmlcov
-.coverage*
+
+# virtual environment
+venv
+
+# python cache
+__pycache__
+
+# airflow
+logs/
+logs_*.txt
+
+# case output
+*.json
+
+# docker
+Dockerfile*
+
+# testing
+*.log

@@ -12,18 +12,19 @@ __pycache__
 .env.db
 
 # expected output
-*.json
+ports_*.json
 
 # scrapy
 logs_*.txt
 
 # airflow
-*.cfg
+airflow.cfg
 *.swp
 logs
 data
 
 # testing
+htmcov
 htmlcov
-.coverage*
+xmlcov
 coverage.*

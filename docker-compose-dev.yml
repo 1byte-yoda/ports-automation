@@ -2,22 +2,31 @@ version: "3.7"
 
 services:
   airflow:
-    build:
-      context: ./src
-      dockerfile: Dockerfile.airflow.dev
-    image: puckel/docker-airflow:latest
-    restart: always
     container_name: airflow
-    volumes:
-      - ./src/airflow/dags:/usr/local/airflow/dags
-      - ./src/airflow/plugins:/usr/local/airflow/plugins
-      - ./src/airflow/output:/usr/local/airflow/output
-      - ./src/airflow/airflow.cfg.example:/usr/local/airflow/airflow.cfg
-      - ./src/airflow/tests:/usr/local/airflow/tests
-    ports:
-      - 8080:8080
+    build:
+      context: ./data_pipeline/docker/airflow
+      dockerfile: Dockerfile.airflow.dev
     depends_on:
       - postgresqldb
+      - mongodb
+    volumes:
+      - "./data_pipeline/docker:/root/airflow/docker"
+      - "./data_pipeline/dags:/root/airflow/dags"
+      - "./data_pipeline/scraper:/root/airflow/scraper"
+      - "./data_pipeline/plugins:/root/airflow/plugins"
+      - "./data_pipeline/output:/root/airflow/output"
+      - "./data_pipeline/tests:/root/airflow/tests"
+      - "./data_pipeline/.env.example:/root/airflow/.env"
+      - "./data_pipeline/htmlcov:/root/airflow/htmlcov"
+      - "./data_pipeline/.coveragerc:/root/airflow/.coveragerc"
+      - "./data_pipeline/Makefile:/root/airflow/Makefile"
+
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./data_pipeline/.env.example
+    init: true
+    restart: always
     healthcheck:
       test: ["CMD", "nc", "-z", "airflow", "8080"]
       timeout: 30s
@@ -27,26 +36,39 @@ services:
   postgresqldb:
     container_name: postgresqldb
     build:
-      context: ./src/db
+      context: ./data_pipeline/docker/db
       dockerfile: Dockerfile.db.dev
     ports:
       - 5432:5432
     env_file:
-      - ./src/db/.env.db.example
+      - ./data_pipeline/.env.example
     volumes:
-      - postgresql_db_container:/data/postgresql_db
-
+      - "postgresqldb:/data/postgresqldb"
+  
+  postgresqldb_test:
+    container_name: postgresqldb_test
+    build:
+      context: ./data_pipeline/docker/db
+      dockerfile: Dockerfile.db.test
+    ports:
+      - 5433:5433
+    env_file:
+      - ./data_pipeline/.env.example
+    volumes:
+      - "postgresqldb_test:/data/postgresqldb_test"
+    
   mongodb:
     container_name: mongodb
     image: mongo:4.4.2-bionic
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    env_file:
+      - ./data_pipeline/.env.example
     ports:
       - 27017:27017
     volumes:
-      - mongodb_data_container:/data/mongo_db
+      - mongodb:/data/mongo_db
 
 volumes:
-  mongodb_data_container:
-  postgresql_db_container:
+  data_pipeline:
+  postgresqldb:
+  mongodb:
+  postgresqldb_test:

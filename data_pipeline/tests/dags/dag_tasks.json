@@ -1,0 +1,70 @@
+{
+    "tasks": [
+        {
+            "task": "begin_execution",
+            "expected_upstream": [],
+            "expected_downstream": ["check_ports_scraper_contracts"]
+        },
+        {
+            "task": "check_ports_scraper_contracts",
+            "expected_upstream": ["begin_execution"],
+            "expected_downstream": ["scrape_unece_data"]
+        },
+        {
+            "task": "scrape_unece_data",
+            "expected_upstream": ["check_ports_scraper_contracts"],
+            "expected_downstream": ["stage_to_mongodb"]
+        },
+        {
+            "task": "stage_to_mongodb",
+            "expected_upstream": ["scrape_unece_data"],
+            "expected_downstream": ["transform_and_load_to_postgres"]
+        },
+        {
+            "task": "transform_and_load_to_postgres",
+            "expected_upstream": ["stage_to_mongodb"],
+            "expected_downstream": ["check_master_data_quality"]
+        },
+        {
+            "task": "check_master_data_quality",
+            "expected_upstream": ["transform_and_load_to_postgres"],
+            "expected_downstream": ["export_to_json", "load_to_analytics_dw"]
+        },
+        {
+            "task": "load_to_analytics_dw",
+            "expected_upstream": ["check_master_data_quality"],
+            "expected_downstream": ["check_dw_data_quality"]
+        },
+        {
+            "task": "export_to_json",
+            "expected_upstream": ["check_master_data_quality"],
+            "expected_downstream": [
+                "send_notification_email", "send_notification_slack"
+            ]
+        },
+        {
+            "task": "check_dw_data_quality",
+            "expected_upstream":  ["load_to_analytics_dw"],
+            "expected_downstream": [
+                "send_notification_email", "send_notification_slack"
+            ]
+        },
+        {
+            "task": "send_notification_email",
+            "expected_upstream": ["check_dw_data_quality", "export_to_json"],
+            "expected_downstream": ["end_execution"]
+        },
+        {
+            "task": "send_notification_slack",
+            "expected_upstream": ["check_dw_data_quality", "export_to_json"],
+            "expected_downstream": ["end_execution"]
+        },
+        {
+            "task": "end_execution",
+            "expected_upstream": [
+                "send_notification_email", "send_notification_slack"
+            ],
+            "expected_downstream": []
+        }
+    ]
+}

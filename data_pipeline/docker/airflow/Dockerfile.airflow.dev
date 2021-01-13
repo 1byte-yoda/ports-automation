@@ -1,0 +1,24 @@
+FROM python:3.7
+
+#Copy requirements.txt
+COPY ./requirements.txt /requirements.txt
+
+# Install and setup Airflow
+RUN pip3 install "apache-airflow[mongo,postgres,ssh,slack,crypto]" \
+&& pip3 install -r requirements.txt
+
+# Change work directory
+WORKDIR /root/airflow/
+
+COPY /config/airflow-dev.cfg airflow.cfg
+
+# Scripts to configure airflow backend
+COPY ./config_setup.py config_setup.py
+COPY ./init_connections.py init_connections.py
+
+# Copy airflow.sh and make it runnable
+COPY ./airflow.sh /airflow.sh
+RUN chmod +x /airflow.sh
+
+# Run
+CMD /airflow.sh

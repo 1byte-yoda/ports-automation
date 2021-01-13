@@ -1,0 +1,15 @@
+Scrapy==2.4.1
+flake8==3.8.4
+autopep8==1.5.4
+dj-database-url==0.5.0
+jsonstreams==0.5.0
+python-dotenv==0.15.0
+txmongo==19.2.0
+retrying==1.3.3
+mongomock==3.22.0
+pytest==6.2.1
+pytest-mock==3.5.0
+pytest-cov==2.10.1
+pytest-postgresql==2.5.2
+pytest-mongo==2.0.0
+pytest-helpers-namespace==2019.1.8
