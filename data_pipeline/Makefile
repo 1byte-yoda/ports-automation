@@ -13,6 +13,3 @@ cov_xml:
 
 test_all:
 	PYTHONPATH=. pytest tests/
-
-test_one:
-	PYTHONPATH=. pytest tests/dags/test_unece_dag_tasks.py -s
