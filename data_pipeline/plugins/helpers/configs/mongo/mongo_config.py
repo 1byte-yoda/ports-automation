@@ -1,4 +1,4 @@
-# helpers/lib/mongo/mongo_config.py
+# data_pipeline/plugins/helpers/config/mongo/mongo.py
 
 
 class MongoConfig:

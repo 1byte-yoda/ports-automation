@@ -1,4 +1,4 @@
-# helpers/lib/sql_queries.py
+# data_pipeline/plugins/helpers/lib/sql_queries.py
 
 
 class SqlQueries:

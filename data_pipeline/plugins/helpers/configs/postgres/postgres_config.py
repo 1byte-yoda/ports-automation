@@ -1,4 +1,4 @@
-# helpers/lib/postgres/postgres_config.py
+# data_pipeline/plugins/helpers/config/postgres/postgres_config.py
 
 
 class PostgresConfig:
