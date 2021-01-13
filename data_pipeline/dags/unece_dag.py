@@ -1,3 +1,6 @@
+# data_pipeline/dags/unece_dag.py
+
+
 import datetime
 from airflow import DAG
 from airflow.models import Variable
@@ -25,8 +28,8 @@ default_args = {
     'depends_on_past': False,
     'email_on_failure': True,
     'email': 'unece_ports@yopmail.com',
-    'retries': 0,
-    'retry_delay': datetime.timedelta(minutes=5)
+    'retries': 5,
+    'retry_delay': datetime.timedelta(minutes=10)
 }
 
 

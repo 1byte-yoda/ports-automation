@@ -1,3 +1,6 @@
+# data_pipeline/docker/airflow/init_connections.py
+
+
 from airflow import settings
 from airflow.models import Connection
 from os import environ
