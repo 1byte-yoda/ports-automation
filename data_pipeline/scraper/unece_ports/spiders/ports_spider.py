@@ -48,6 +48,22 @@ class PortsSpider(Spider):
                 callback=self.parse_port_pandas,
                 cb_kwargs={'country_name': country_name}
             )
+    
+    def parse_start_url_test(self, response):
+        """This function parses url links of countries (horizontal parsing),
+        then yield the url into a callback function for vertical parsing.
+        This test will ensure that href in anchor tags are available in the table.
+        @url https://unece.org/cefact/unlocode-code-list-country-and-territory
+        @returns items 1
+        @scrapes country_href
+        """
+        # assuming that every country column has 1 child
+        country_selector = response.xpath(
+            '//*[contains(@class, "content_30739 page_23770")]'
+            '//table//tr//a[1]/@href'
+        ).extract()
+        for selector in country_selector:
+            yield {'country_href': selector}
 
     def parse_port_pandas(self, response, country_name="country"):
         """This function uses pandas to parse UN/LOCODE per country.

@@ -27,6 +27,8 @@ class DataQualityCheckOperator(BaseOperator):
         :param PostgresConfig postgres_config:
             instance of PostgresConfig class that provides connection
             parameters for Postgres connection.
+        :param list queries:
+            queries to be run to check the data quality.
         """
         super().__init__(**kwargs)
         self._tables = tables

@@ -115,7 +115,7 @@ export_to_json = LoadToJsonOperator(
 send_notification_email = EmailOperator(
     task_id='send_notification_email',
     to='unece_ports@yopmail.com',
-    subject='Notification for unece_data_pipeline',
+    subject='Notification for unece_dag',
     html_content='<h3>unece_data_pipeline executed successfully</h3>',
     dag=dag
 )
@@ -125,7 +125,7 @@ send_notification_slack = SlackAPIPostOperator(
     task_id='send_notification_slack',
     username='airflow',
     token=Variable.get('slack_api_key'),
-    text='unece_data_pipeline executed successfully',
+    text='unece_dag executed successfully',
     channel='#automationcase',
     dag=dag
 )

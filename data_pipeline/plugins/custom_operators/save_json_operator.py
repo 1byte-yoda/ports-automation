@@ -31,6 +31,8 @@ class LoadToJsonOperator(BaseOperator):
             save folder path of the expected json file.
         :param list tables:
             list of tables to be queried.
+        :param str query:
+            query to be used to select data to be written in JSON file.
         """
         super(LoadToJsonOperator, self).__init__(*args, **kwargs)
         self._postgres_conn_id = postgres_config.conn_id
