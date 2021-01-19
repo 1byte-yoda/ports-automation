@@ -19,7 +19,10 @@ class LoadToJsonOperator(BaseOperator):
     ui_color = '#99f3bd'
 
     @apply_defaults
-    def __init__(self, postgres_config, path, tables, query, *args, **kwargs):
+    def __init__(
+        self, postgres_config, path, tables, query,
+        filenames=dict(), *args, **kwargs
+    ):
         """
         Airflow operator for getting SQL query result
         and writting it into a json file.
@@ -29,16 +32,21 @@ class LoadToJsonOperator(BaseOperator):
             parameters for Postgres connection.
         :param str path:
             save folder path of the expected json file.
-        :param list tables:
-            list of tables to be queried.
+        :param list[str] tables:
+            list of table names to be queried.
         :param str query:
             query to be used to select data to be written in JSON file.
+        :param dict filenames:
+            mappings of the table-names and the associated json-file names,
+            if not provided the default value will be
+            '{table-name}_{execution-date}.json'
         """
         super(LoadToJsonOperator, self).__init__(*args, **kwargs)
         self._postgres_conn_id = postgres_config.conn_id
         self._path = Path(path)
         self._tables = tables
         self._query = query
+        self._filenames = filenames
         self._date_format = "%Y%m%dT%H%M%S"
 
     def execute(self, context, testing=False):
@@ -61,8 +69,13 @@ class LoadToJsonOperator(BaseOperator):
                     table=table
                 )
                 psql_cursor.execute(ports_select_all)
-                file_name = f"{table}_{execution_date}.json"
-                self.save_to_json(psql_cursor, table, file_name)
+                if not self._filenames:
+                    self._filenames[table] = f"{table}_{execution_date}.json"
+                self.save_to_json(
+                    cursor=psql_cursor,
+                    key=table,
+                    file_name=self._filenames[table]
+                )
         except (UndefinedTable, OperationalError):
             self.log.error("LoadToJsonOperator FAILED.")
             raise Exception("LoadToJsonOperator FAILED. OperationalError")
@@ -102,6 +115,7 @@ class LoadToJsonOperator(BaseOperator):
                 "Writting JSON file FAILED. "
                 "An error occured."
             )
+            self.log.error(traceback.format_exc())
             raise Exception(
                 "LoadToJsonOperator FAILED."
             )

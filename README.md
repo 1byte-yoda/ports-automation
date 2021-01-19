@@ -30,10 +30,9 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#helpful-resources">Helpful Resources</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#case-scenarios">Case Scenarios</a></li>
   </ol>
 </details>
 
@@ -80,9 +79,65 @@ This project aims to create an automated data pipeline that can scrape data from
 </br>
 
 ## Test Coverage Snapshot
-[![Code Test Coverage][code-cov-screenshot]](https://github.com/PHMark/ports-automation/blob/main/docs/images/code-cov.png)
+[![Code Test Coverage][code-cov-screenshot]](https://github.com/PHMark/ports-automation/blob/main/docs/images/cov-test.png)
 
 
+## Getting Started
+### Prerequisites
+
+Make sure you have the following software installed and running on your computer:
+
+* [Docker](https://docs.docker.com/get-docker/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+
+Check docker version
+```sh
+$ docker -v
+Docker version 19.03.13, build 4484c46d9d
+```
+
+Check docker-compose version
+```sh
+$ docker-compose -v
+docker-compose version 1.27.4, build 40524192
+```
+
+### Installation
+
+1. Clone the repo
+```sh
+$ git clone https://github.com/PHMark/ports-automation.git
+```
+
+
+2. Make sure you are in the root folder "ports-automation", and edit the environment [ports-automation/data-pipeline/.env.example](https://github.com/PHMark/ports-automation/blob/main/data_pipeline/.env.example) file to update the following variables:
+
+```
+# [*******INIT THE FF. VARIABLES********]
+# SMTP and Slack setup for notification
+SMTP_PASSWORD=16_DIGIT_APP_PASSWORD
+SMTP_USER=YOUR_EMAIL_ADDRESS
+SMTP_PORT=587
+SMTP_HOST=smtp.gmail.com
+SMTP_MAIL_FROM=YOUR_EMAIL_ADDRESS
+SLACK_API_KEY=57_DIGIT_API_KEY
+```
+I used gmail as the default SMTP but feel free to modify the configuration. You may also find this <a href="#helpful-resources">resources</a> useful.
+
+
+3. Install using docker-compose
+```sh
+$ docker-compose -f docker-compose-dev.yml up --build
+```
+Wait for airflow to initialize the database, scheduler, and the web server. This might take a few minutes depending on your machine.
+
+4. Visit http://localhost:8080, you just successfully replicate the app on your machine!
+
+### Helpful Resources:
+  
+  - You can follow this [link](https://api.slack.com/authentication/basics) to create your SLACK_API_KEY
+  
+  - And the 6 steps listed on this [link](https://stackoverflow.com/questions/51829200/how-to-set-up-airflow-send-email) to create your SMTP_PASSWORD
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

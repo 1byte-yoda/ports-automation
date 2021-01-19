@@ -108,6 +108,7 @@ export_to_json = LoadToJsonOperator(
     query=SqlQueries.select_all_query_to_json,
     path='output/json',
     tables=['ports'],
+    filenames={'ports': 'ports.json'},
     dag=dag
 )
 
