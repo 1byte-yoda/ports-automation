@@ -65,8 +65,7 @@ class MongodbPipeline(object):
             )
         except Exception:
             if self.report_connection_error:
-                logger.error("Can't connect to MongoDB: %s" %
-                             self.mongo_url)
+                logger.error("An error occured while Upserting data")
                 self.report_connection_error = False
                 logger.error(traceback.format_exc())
                 raise TransactionError('An error occured during transaction.')

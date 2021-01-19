@@ -16,26 +16,27 @@ DEFAULT_VALUE = 'missing_value'
 logger = Logger('warner')
 
 
-def get_data(response: Response) -> namedtuple:
+def get_ports_data(response: Response) -> namedtuple:
     """
     Parse table elements from response body and store into DataFrames.
 
-    :param bytes response_body:
-        HTML response body that will be searched for table elements.
+    :param Response response:
+        HTML response with body attribute which will be searched
+        for table elements.
     :return namedtuple Ports:
         namedtuple instance that contains an iterable and string attribute
     """
     try:
         response_body = response.body
         _, df_country, df = pd.read_html(response_body)
-    except ValueError:
+        country_name = df_country.iloc[0][0]
+    except (ValueError, IndexError):
         logger.warning(
             f'SKIPPING: {response.url}'
             'REASON: Number of tables has been changed. '
             'Using default values instead.'
         )
         return 0
-    country_name = df_country.iloc[0][0]
     df.columns = df.iloc[0]
     df = df.drop(df.index[0])
     all_expected_columns = EXPECTED_COLUMNS + [SEARCH_COLUMN]

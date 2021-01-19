@@ -13,7 +13,8 @@ from psycopg2.errors import OperationalError, UndefinedTable
 
 class TransformAndLoadOperator(BaseOperator):
     """
-    Airflow operator that transfers data from staging db to master db.
+    Airflow operator that process and transfers data
+    from staging db to master db.
     """
     ui_color = "#9c72f7"
 
@@ -23,7 +24,8 @@ class TransformAndLoadOperator(BaseOperator):
         query_params=None, *args, **kwargs
     ):
         """
-        Airflow operator that transfers data from staging db to master db.
+        Airflow operator that process and transfers data
+        from staging db to master db.
 
         :param MongoConfig mongo_config:
             instance of MongoConfig class that provides connection
@@ -53,7 +55,8 @@ class TransformAndLoadOperator(BaseOperator):
 
     def execute(self, context, testing=False):
         """
-        Read all data from mongo db and write to postgresql db.
+        Read all data from mongo db, process it
+        and write to postgresql db.
 
         Uses UPSERT SQL query to write data.
         """
@@ -78,6 +81,7 @@ class TransformAndLoadOperator(BaseOperator):
             psql_conn.commit()
         except (OperationalError, UndefinedTable, OperationFailure):
             self.log.error("Writting to database FAILED.")
+            self.log.error(traceback.format_exc())
             raise Exception("LoadToMasterdbOperator FAILED.")
         except Exception:
             self.log.error(traceback.format_exc())

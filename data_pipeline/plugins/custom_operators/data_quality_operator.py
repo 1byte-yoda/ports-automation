@@ -2,6 +2,7 @@
 
 
 import json
+import traceback
 from psycopg2.errors import OperationalError, InterfaceError
 from psycopg2.extras import RealDictCursor
 from airflow.models import BaseOperator
@@ -12,7 +13,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 class DataQualityCheckOperator(BaseOperator):
     """
     Airflow operator that runs SQL queries to check the quality
-    of downstream data.
+    of upstream data.
     """
     ui_color = '#28df99'
 
@@ -20,7 +21,7 @@ class DataQualityCheckOperator(BaseOperator):
     def __init__(self, tables, postgres_config, queries, *args, **kwargs):
         """
         Airflow operator that runs SQL queries to check the quality
-        of downstream data.
+        of upstream data.
 
         :param list tables:
             list of tables that will be checked against a SQL query.
@@ -68,6 +69,7 @@ class DataQualityCheckOperator(BaseOperator):
                 )
         except (InterfaceError, OperationalError):
             self.log.error("DataQualityCheckOperator FAILED.")
+            self.log.error(traceback.format_exc())
             raise Exception("DataQualityCheckOperator FAILED.")
         except Exception:
             self.log.error("DataQualityCheckOperator FAILED.")

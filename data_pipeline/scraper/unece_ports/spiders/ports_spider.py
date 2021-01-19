@@ -11,7 +11,7 @@ from unece_ports.item_loaders import (
     PortItemLoader
 )
 from unece_ports.spiders.lib.utils import (
-    get_data
+    get_ports_data
 )
 
 
@@ -72,7 +72,7 @@ class PortsSpider(Spider):
         @returns items 1
         @scrapes countryName portName coordinates unlocode
         """
-        ports = get_data(
+        ports = get_ports_data(
             response=response
         )
         if ports and ports.iter:
