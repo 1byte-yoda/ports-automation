@@ -15,6 +15,7 @@ __pycache__
 # expected output
 ports_*.json
 
+
 # scrapy
 logs_*.txt
 
