@@ -145,9 +145,9 @@ Wait for airflow to initialize the database, scheduler, and the web server. This
 [code-cov-screenshot]: docs/images/cov-test.png
 [dag-screenshot]: docs/images/dag.png
 [build-status-shield]: https://travis-ci.com/1byte-yoda/ports-automation.svg?branch=main
-[build-status-url]: https://travis-ci.com/PHMark/ports-automation
-[code-cov-shield]: https://codecov.io/gh/PHMark/ports-automation/branch/main/graph/badge.svg?token=ZQ23COSI3V
-[code-cov-url]: https://codecov.io/gh/PHMark/ports-automation
+[build-status-url]: https://travis-ci.com/1byte-yoda/ports-automation
+[code-cov-shield]: https://codecov.io/gh/1byte-yoda/ports-automation/branch/main/graph/badge.svg?token=ZQ23COSI3V
+[code-cov-url]: https://codecov.io/gh/1byte-yoda/ports-automation
 [code-style]: https://img.shields.io/badge/codestyle-flake8-28df99
-[code-style-url]: https://github.com/PHMark/ports-automation
+[code-style-url]: https://github.com/1byte-yoda/ports-automation
 [ports-data-url]: https://unece.org/cefact/unlocode-code-list-country-and-territory
