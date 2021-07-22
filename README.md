@@ -106,11 +106,11 @@ docker-compose version 1.27.4, build 40524192
 
 1. Clone the repo
 ```sh
-$ git clone https://github.com/PHMark/ports-automation.git
+$ git clone https://github.com/1byte-yoda/ports-automation.git
 ```
 
 
-2. Make sure you are in the root folder "ports-automation", and edit the environment [ports-automation/data-pipeline/.env.example](https://github.com/PHMark/ports-automation/blob/main/data_pipeline/.env.example) file to update the following variables:
+2. Make sure you are in the root folder "ports-automation", and edit the environment [ports-automation/data-pipeline/.env.example](https://github.com/1byte-yoda/ports-automation/blob/main/data_pipeline/.env.example) file to update the following variables:
 
 ```
 # [*******INIT THE FF. VARIABLES********]
@@ -144,7 +144,7 @@ Wait for airflow to initialize the database, scheduler, and the web server. This
 [architecture-screenshot]: docs/images/architecture.png
 [code-cov-screenshot]: docs/images/cov-test.png
 [dag-screenshot]: docs/images/dag.png
-[build-status-shield]: https://travis-ci.com/PHMark/ports-automation.svg?branch=main
+[build-status-shield]: https://travis-ci.com/1byte-yoda/ports-automation.svg?branch=main
 [build-status-url]: https://travis-ci.com/PHMark/ports-automation
 [code-cov-shield]: https://codecov.io/gh/PHMark/ports-automation/branch/main/graph/badge.svg?token=ZQ23COSI3V
 [code-cov-url]: https://codecov.io/gh/PHMark/ports-automation
