@@ -62,8 +62,8 @@ This project aims to create an automated data pipeline that can scrape data from
 
 ## Data Flow
 * As the first component, we have the data ingestion phase which currently checks the scraper if it can request the right data on the web by running scrapy contracts
-* Then if the check passes then it will scrape the data.
-* After that the scraped data, while unstructured and uncleaned, will be ingested/upserted into the staging database.
+* Then if the check passes, it will scrape the data.
+* After that, the scraped data, while unstructured and uncleaned, will be ingested/upserted into the staging database.
 * After that, the ETL operator will extract the data from the staging db, then perform some processing like cleaning & standardizing columns, and sends it to the master database.
 * Master database as the name implies, holds the master data which were cleaned and ready to be used by downstream processes.
 * A data validator will then run some checks on the data. Ex. number of rows
